@@ -4,7 +4,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import seasonal_decompose
+import logging
+import os,sys
+sys.path.append(os.path.abspath(os.path.join('..', 'logs')))
+LOG_FILE = os.path.join(os.path.dirname(__file__), '../logs/data_preprocess.log')
+os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 class SeasonalAnalysis:
     
     def __init__(self, logger=None):
