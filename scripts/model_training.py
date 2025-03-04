@@ -11,6 +11,7 @@ import os, sys
 from tensorflow.keras.models import save_model
 
 import logging
+import joblib
 sys.path.append(os.path.abspath(os.path.join('..', 'logs')))
 LOG_FILE = os.path.join(os.path.dirname(__file__), '../logs/data_preprocess.log')
 os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
@@ -244,3 +245,22 @@ class ModelTrainer:
         except Exception as e:
             self.logger.error(f"Error in plotting results: {e}")
             raise ValueError("Plotting results failed")
+    def save_best_model(self, model_name='ARIMA'):
+      """Save the best model for future use."""
+      try:
+          if model_name in self.model:
+              model_data = self.model[model_name]
+              if model_name == 'LSTM':
+                  # Save the LSTM model
+                  model = model_data['model']
+                  model.save(f'../data/{model_name}_best_model.h5')
+                  self.logger.info(f"{model_name} model saved successfully.")
+              else:
+                  # Save the ARIMA or SARIMA model using joblib
+                  joblib.dump(model_data, f'../data/{model_name}_best_model.pkl')
+                  self.logger.info(f"{model_name} model saved successfully.")
+          else:
+              self.logger.error(f"{model_name} model not found for saving.")
+      except Exception as e:
+          self.logger.error(f"Error saving {model_name} model: {e}")
+          raise ValueError(f"Model saving failed for {model_name}")
